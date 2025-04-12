@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Will You Marry Me?</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@400;700&display=swap');
+        
+        :root {
+            --pink: #ff6b9d;
+            --dark-pink: #d81b60;
+            --light-pink: #ffebee;
+            --gold: #ffd700;
+            --silver: #c0c0c0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            text-align: center;
+            background: linear-gradient(135deg, #fff5f7, #ffeef2);
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding: 20px;
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="%23ff6b9d" d="M12,21.35L10.55,20.03C5.4,15.36 2,12.27 2,8.5C2,5.41 4.42,3 7.5,3C9.24,3 10.91,3.81 12,5.08C13.09,3.81 14.76,3 16.5,3C19.58,3 22,5.41 22,8.5C22,12.27 18.6,15.36 13.45,20.03L12,21.35Z"/></svg>'), auto;
+        }
+        
+        .cursor-effect {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: rgba(255, 107, 157, 0.5);
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            mix-blend-mode: multiply;
+            z-index: 9999;
+            transition: transform 0.1s ease;
+        }
+        
+        .cursor-effect::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-color: var(--pink);
+            animation: pulse 1.5s infinite;
+        }
+        
+        .broken-heart-cursor {
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="%23f44336" d="M12,21.35L10.55,20.03C5.4,15.36 2,12.27 2,8.5C2,5.41 4.42,3 7.5,3C9.24,3 10.91,3.81 12,5.08C13.09,3.81 14.76,3 16.5,3C19.58,3 22,5.41 22,8.5C22,12.27 18.6,15.36 13.45,20.03L12,21.35M8,12V10H10V12H8Z"/></svg>'), auto;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(0.8); opacity: 0.7; }
+            70% { transform: scale(1.3); opacity: 0.2; }
+            100% { transform: scale(0.8); opacity: 0.7; }
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            color: var(--dark-pink);
+            font-size: clamp(2.5rem, 8vw, 4.5rem);
+            margin-bottom: 30px;
+            text-shadow: 3px 3px 0 rgba(0,0,0,0.1);
+            animation: float 3s ease-in-out infinite;
+            position: relative;
+        }
+        
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 40px 0;
+        }
+        
+        button {
+            padding: 15px;
+            font-size: clamp(1rem, 4vw, 1.5rem);
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            z-index: 1;
+        }
+        
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.5s;
+            z-index: -1;
+        }
+        
+        button:hover::before {
+            transform: translateX(100%);
+        }
+        
+        #optionA {
+            background: linear-gradient(135deg, #4caf50, #8bc34a);
+            color: white;
+        }
+        
+        #optionB {
+            background: linear-gradient(135deg, #2196f3, #03a9f4);
+            color: white;
+        }
+        
+        #optionC {
+            background: linear-gradient(135deg, #ff9800, #ffc107);
+            color: white;
+        }
+        
+        #optionD {
+            background: linear-gradient(135deg, #f44336, #e91e63);
+            color: white;
+            grid-column: span 2;
+        }
+        
+        button:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        button:active {
+            transform: translateY(0) scale(0.98);
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        .surprise {
+            margin-top: 20px;
+            animation: fadeIn 1s;
+            padding: 0 10px;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .surprise h2 {
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(1.8rem, 6vw, 3rem);
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+        }
+        
+        .surprise p {
+            font-size: clamp(1rem, 3.5vw, 1.2rem);
+            margin-bottom: 20px;
+            color: #555;
+        }
+        
+        .surprise img {
+            max-width: 100%;
+            max-height: 50vh;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-top: 15px;
+        }
+        
+        #cryingHamster {
+            max-width: min(400px, 90%);
+            margin: 0 auto;
+            display: block;
+        }
+        
+        .hearts {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .heart {
+            position: absolute;
+            font-size: 20px;
+            color: var(--pink);
+            animation: float 5s ease-in-out infinite;
+            opacity: 0;
+        }
+        
+        .broken-heart {
+            position: absolute;
+            font-size: 20px;
+            color: #f44336;
+            animation: fall 3s linear forwards;
+            opacity: 1;
+        }
+        
+        @keyframes fall {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+        
+        .firework {
+            position: fixed;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 100;
+        }
+        
+        .confetti {
+            position: fixed;
+            width: 12px;
+            height: 12px;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 100;
+        }
+        
+        .ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: clamp(100px, 30vw, 150px);
+            height: clamp(100px, 30vw, 150px);
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path fill="none" stroke="%23ffd700" stroke-width="8" d="M50,5 a45,45 0 0,1 0,90 a45,45 0 0,1 0,-90" /></svg>') no-repeat center center;
+            background-size: contain;
+            opacity: 0;
+            animation: ringSpin 3s linear infinite;
+        }
+        
+        @keyframes ringSpin {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        
+        .floating-ring {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path fill="none" stroke="%23ffd700" stroke-width="4" d="M50,5 a45,45 0 0,1 0,90 a45,45 0 0,1 0,-90" /></svg>') no-repeat center center;
+            background-size: contain;
+            animation: float 6s ease-in-out infinite, ringSpin 8s linear infinite;
+        }
+        
+        .floating-heart {
+            position: absolute;
+            font-size: 20px;
+            color: var(--pink);
+            animation: float 8s ease-in-out infinite;
+        }
+        
+        .sparkle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background-color: var(--gold);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10;
+        }
+        
+        .romantic-text {
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(1.2rem, 4vw, 1.8rem);
+            color: var(--dark-pink);
+            margin: 20px 0;
+            text-shadow: 1px 1px 0 rgba(0,0,0,0.1);
+        }
+        
+        /* Broken heart effects */
+        .broken-heart-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+            display: none;
+        }
+        
+        .crack {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path fill="none" stroke="%23f44336" stroke-width="2" d="M20,20 L80,80 M30,50 L70,30 M50,70 L60,40"/></svg>') no-repeat center center;
+            background-size: contain;
+            animation: crackAppear 1s forwards;
+        }
+        
+        @keyframes crackAppear {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px 10px;
+            }
+            
+            .options {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            
+            #optionD {
+                grid-column: span 1;
+            }
+            
+            button {
+                padding: 12px;
+            }
+            
+            .ring {
+                width: 80px;
+                height: 80px;
+            }
+        }
+        
+        @media (max-width: 400px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .romantic-text {
+                font-size: 1.1rem;
+            }
+            
+            button {
+                font-size: 0.9rem;
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="cursor-effect" id="cursorEffect"></div>
+    <div class="hearts" id="hearts"></div>
+    <div class="broken-heart-container" id="brokenHeartContainer"></div>
+    
+    <div class="container">
+        <div id="mainContent">
+            <h1>Will You Marry Me?</h1>
+            
+            <p class="romantic-text">My heart is yours forever and always...</p>
+            
+            <div class="options">
+                <button id="optionA">A. Yes 💍</button>
+                <button id="optionB">B. A 💖</button>
+                <button id="optionC">C. B 💕</button>
+                <button id="optionD">D. No 😢</button>
+            </div>
+            
+            <p class="romantic-text">Every moment with you is a dream come true</p>
+        </div>
+        
+        <div id="surpriseA" class="surprise hidden">
+            <div class="ring"></div>
+            <h2 style="color: #4caf50;">Yes! Yes! A Thousand Times Yes! 💍</h2>
+            <p class="romantic-text">You've made me the happiest person in the world!</p>
+            <p>Let's begin our forever together...</p>
+            <img src="https://media.tenor.com/I3btKSBxue4AAAAM/yell-shout.gif" alt="Happy couple">
+        </div>
+        
+        <div id="surpriseB" class="surprise hidden">
+            <h2 style="color: #2196f3;">Clever Choice! 😉</h2>
+            <p class="romantic-text">Choosing A through B still means YES!</p>
+            <p>I knew you were the smart one in this relationship!</p>
+            <img src="https://media.tenor.com/9f0rhLXXqdcAAAAM/happy-happy-happy-happy.gif" alt="Smart choice">
+        </div>
+        
+        <div id="surpriseC" class="surprise hidden">
+            <h2 style="color: #ff9800;">You're Too Cute! 😘</h2>
+            <p class="romantic-text">Choosing B through C still means YES!</p>
+            <p>I love how you try to be sneaky but still say yes!</p>
+            <img src="https://media.tenor.com/O9P6oHeJ5MwAAAAM/dog-smile.gif" alt="Happy dance">
+        </div>
+        
+        <div id="surpriseD" class="surprise hidden">
+            <img id="cryingHamster" src="https://media.tenor.com/OroVCOXbuUUAAAAM/sadhamstergirl.gif" alt="Crying hamster">
+            <audio id="sadSound" loop>
+                <source src="SoundFX/Proposal/Dank crying meme.mp3" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+        </div>
+    </div>
+    
+    <audio id="happySound" loop>
+        <source src="SoundFX/Proposal/FNAF_ Kids Cheering - Gaming Sound Effect (HD).mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    
+    <audio id="fireworkSound">
+        <source src="SoundFX/Proposal/Sound Effects - Fireworks.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    
+    <audio id="breakSound">
+        <source src="SoundFX/Proposal/glass crack effect.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <script>
+        // Custom cursor effect
+        const cursorEffect = document.getElementById('cursorEffect');
+        document.addEventListener('mousemove', (e) => {
+            cursorEffect.style.left = e.clientX + 'px';
+            cursorEffect.style.top = e.clientY + 'px';
+            
+            // Create trailing sparkles
+            if (Math.random() > 0.7) {
+                createSparkle(e.clientX, e.clientY);
+            }
+        });
+        
+        function createSparkle(x, y) {
+            const sparkle = document.createElement('div');
+            sparkle.className = 'sparkle';
+            sparkle.style.left = x + 'px';
+            sparkle.style.top = y + 'px';
+            sparkle.style.opacity = 1;
+            
+            // Random size
+            const size = Math.random() * 4 + 3;
+            sparkle.style.width = size + 'px';
+            sparkle.style.height = size + 'px';
+            
+            document.body.appendChild(sparkle);
+            
+            // Animate
+            const angle = Math.random() * Math.PI * 2;
+            const distance = Math.random() * 15 + 10;
+            const duration = Math.random() * 800 + 500;
+            
+            const animation = sparkle.animate([
+                { 
+                    transform: `translate(0, 0) rotate(0deg)`,
+                    opacity: 1 
+                },
+                { 
+                    transform: `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px) rotate(360deg)`,
+                    opacity: 0 
+                }
+            ], {
+                duration: duration,
+                easing: 'cubic-bezier(0.4, 0, 0.2, 1)'
+            });
+            
+            animation.onfinish = () => sparkle.remove();
+        }
+        
+        // Create floating hearts and rings
+        function createFloatingElements() {
+            const container = document.querySelector('.container');
+            
+            // Create hearts
+            for (let i = 0; i < 15; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'floating-heart';
+                heart.innerHTML = '❤';
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.top = Math.random() * 100 + '%';
+                heart.style.fontSize = (Math.random() * 16 + 10) + 'px';
+                heart.style.animationDuration = (Math.random() * 8 + 4) + 's';
+                heart.style.animationDelay = Math.random() * 5 + 's';
+                container.appendChild(heart);
+            }
+            
+            // Create rings
+            for (let i = 0; i < 8; i++) {
+                const ring = document.createElement('div');
+                ring.className = 'floating-ring';
+                ring.style.left = Math.random() * 100 + '%';
+                ring.style.top = Math.random() * 100 + '%';
+                ring.style.animationDuration = (Math.random() * 10 + 5) + 's';
+                ring.style.animationDelay = Math.random() * 5 + 's';
+                container.appendChild(ring);
+            }
+        }
+        
+        // Firework effect
+        function createFirework(x, y, color) {
+            const firework = document.createElement('div');
+            firework.className = 'firework';
+            firework.style.left = x + 'px';
+            firework.style.top = y + 'px';
+            firework.style.backgroundColor = color;
+            document.body.appendChild(firework);
+            
+            // Animate firework
+            const particles = 25;
+            const angleIncrement = (Math.PI * 2) / particles;
+            
+            for (let i = 0; i < particles; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'firework-particle';
+                particle.style.left = x + 'px';
+                particle.style.top = y + 'px';
+                particle.style.backgroundColor = color;
+                document.body.appendChild(particle);
+                
+                const angle = angleIncrement * i;
+                const distance = Math.random() * 80 + 40;
+                const size = Math.random() * 4 + 2;
+                const duration = Math.random() * 800 + 400;
+                
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                
+                particle.animate([
+                    { 
+                        transform: 'translate(0, 0) scale(1)',
+                        opacity: 1 
+                    },
+                    { 
+                        transform: `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px) scale(0)`,
+                        opacity: 0 
+                    }
+                ], {
+                    duration: duration,
+                    easing: 'cubic-bezier(0.1, 0.8, 0.2, 1)'
+                });
+                
+                setTimeout(() => {
+                    particle.remove();
+                }, duration);
+            }
+            
+            setTimeout(() => {
+                firework.remove();
+            }, 800);
+        }
+        
+        // Confetti effect
+        function createConfetti() {
+            const colors = ['#ff6b9d', '#ffd700', '#4caf50', '#2196f3', '#ff9800'];
+            
+            for (let i = 0; i < 80; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * window.innerWidth + 'px';
+                confetti.style.top = -20 + 'px';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+                confetti.style.width = Math.random() * 8 + 4 + 'px';
+                confetti.style.height = Math.random() * 8 + 4 + 'px';
+                document.body.appendChild(confetti);
+                
+                const animation = confetti.animate([
+                    { 
+                        transform: `translate(0, 0) rotate(0deg)`,
+                        opacity: 1 
+                    },
+                    { 
+                        transform: `translate(${Math.random() * 150 - 75}px, ${window.innerHeight + 20}px) rotate(${Math.random() * 360}deg)`,
+                        opacity: 0 
+                    }
+                ], {
+                    duration: Math.random() * 2500 + 1500,
+                    easing: 'cubic-bezier(0.1, 0.8, 0.2, 1)'
+                });
+                
+                animation.onfinish = () => confetti.remove();
+            }
+        }
+        
+        // Broken heart effect
+        function breakHearts() {
+            // Change cursor to broken heart
+            document.body.classList.add('broken-heart-cursor');
+            cursorEffect.style.display = 'none';
+            
+            // Show broken heart container
+            const brokenHeartContainer = document.getElementById('brokenHeartContainer');
+            brokenHeartContainer.style.display = 'block';
+            
+            // Create cracks
+            for (let i = 0; i < 5; i++) {
+                const crack = document.createElement('div');
+                crack.className = 'crack';
+                crack.style.left = Math.random() * window.innerWidth + 'px';
+                crack.style.top = Math.random() * window.innerHeight + 'px';
+                crack.style.width = (Math.random() * 100 + 50) + 'px';
+                crack.style.height = (Math.random() * 100 + 50) + 'px';
+                crack.style.animationDelay = (i * 0.3) + 's';
+                brokenHeartContainer.appendChild(crack);
+            }
+            
+            // Break floating hearts
+            const hearts = document.querySelectorAll('.floating-heart');
+            hearts.forEach(heart => {
+                heart.classList.remove('floating-heart');
+                heart.classList.add('broken-heart');
+                heart.innerHTML = '💔';
+                heart.style.color = '#f44336';
+                heart.style.animation = 'fall 3s linear forwards';
+            });
+        }
+        
+        // Play sound function
+        function playSound(soundId) {
+            const sound = document.getElementById(soundId);
+            sound.currentTime = 0;
+            sound.play().catch(e => console.log("Audio play prevented:", e));
+        }
+        
+        // Stop all sounds
+        function stopAllSounds() {
+            document.getElementById('happySound').pause();
+            document.getElementById('sadSound').pause();
+            document.getElementById('fireworkSound').pause();
+            document.getElementById('breakSound').pause();
+        }
+        
+        // Initialize
+        window.onload = function() {
+            createFloatingElements();
+            
+            // Button event listeners
+            const positiveOptions = ['optionA', 'optionB', 'optionC'];
+            
+            positiveOptions.forEach(optionId => {
+                document.getElementById(optionId).addEventListener('click', function(e) {
+                    // Hide main content
+                    document.getElementById('mainContent').classList.add('hidden');
+                    
+                    // Show surprise
+                    document.getElementById('surprise' + optionId.slice(-1)).classList.remove('hidden');
+                    
+                    // Play sounds
+                    stopAllSounds();
+                    playSound('happySound');
+                    playSound('fireworkSound');
+                    
+                    // Create fireworks at click position
+                    for (let i = 0; i < 5; i++) {
+                        setTimeout(() => {
+                            createFirework(
+                                e.clientX + (Math.random() * 80 - 40),
+                                e.clientY + (Math.random() * 80 - 40),
+                                `hsl(${Math.random() * 360}, 100%, 50%)`
+                            );
+                        }, i * 200);
+                    }
+                    
+                    // Create confetti
+                    createConfetti();
+                    
+                    // Show ring animation
+                    document.querySelector('.ring').style.opacity = 1;
+                });
+            });
+            
+            document.getElementById('optionD').addEventListener('click', function() {
+                document.getElementById('mainContent').classList.add('hidden');
+                document.getElementById('surpriseD').classList.remove('hidden');
+                stopAllSounds();
+                playSound('sadSound');
+                playSound('breakSound');
+                
+                // Break all hearts
+                breakHearts();
+                
+                // Create crying effect
+                for (let i = 0; i < 15; i++) {
+                    setTimeout(() => {
+                        const tear = document.createElement('div');
+                        tear.className = 'firework';
+                        tear.style.left = (Math.random() * window.innerWidth) + 'px';
+                        tear.style.top = '0px';
+                        tear.style.backgroundColor = '#2196f3';
+                        document.body.appendChild(tear);
+                        
+                        tear.animate([
+                            { transform: 'translateY(0)', opacity: 1 },
+                            { transform: `translateY(${window.innerHeight}px)`, opacity: 0 }
+                        ], {
+                            duration: 2000,
+                            easing: 'cubic-bezier(0.4, 0, 1, 1)'
+                        });
+                        
+                        setTimeout(() => tear.remove(), 2000);
+                    }, i * 300);
+                }
+            });
+            
+            // Add sparkle effect to buttons on hover
+            document.querySelectorAll('button').forEach(button => {
+                button.addEventListener('mouseenter', () => {
+                    const rect = button.getBoundingClientRect();
+                    for (let i = 0; i < 8; i++) {
+                        createSparkle(
+                            rect.left + Math.random() * rect.width,
+                            rect.top + Math.random() * rect.height
+                        );
+                    }
+                });
+            });
+        };
+    </script>
+</body>
+</html>
